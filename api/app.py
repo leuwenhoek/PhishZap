@@ -6,16 +6,22 @@ from google.genai import types
 from dotenv import load_dotenv
 import re
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-app = Flask(__name__, template_folder=os.path.join(PROJECT_ROOT,"PhishZap","Web","templates"), static_folder=os.path.join(PROJECT_ROOT,"PhishZap","Web","static"))
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
 
-URLchecker_vector = pickle.load(open(os.path.join(PROJECT_ROOT,"PhishZap", "Model", "URL checker", "vectorize.pkl"), 'rb'))
-URLchecker_model = pickle.load(open(os.path.join(PROJECT_ROOT,"PhishZap",'Model',"URL checker","model.pkl"),'rb'))
+app = Flask(__name__, 
+            template_folder=os.path.join(PROJECT_ROOT, "Web", "templates"), 
+            static_folder=os.path.join(PROJECT_ROOT, "Web", "static"))
 
+URL_CHECK_DIR = os.path.join(PROJECT_ROOT, "Model", "URL checker")
+MSG_CHECK_DIR = os.path.join(PROJECT_ROOT, "Model", "MSG checker")
 
-MSGchecker_vector = pickle.load(open(os.path.join(PROJECT_ROOT,"PhishZap", "Model", "MSG checker", "MSGchecker_vectorizer.pkl"), 'rb'))
-MSGchecker_model = pickle.load(open(os.path.join(PROJECT_ROOT,"PhishZap",'Model',"MSG checker","MSGchecker_model.pkl"),'rb'))
+URLchecker_vector = pickle.load(open(os.path.join(URL_CHECK_DIR, "vectorize.pkl"), 'rb'))
+URLchecker_model = pickle.load(open(os.path.join(URL_CHECK_DIR, "model.pkl"), 'rb'))
+
+MSGchecker_vector = pickle.load(open(os.path.join(MSG_CHECK_DIR, "MSGchecker_vectorizer.pkl"), 'rb'))
+MSGchecker_model = pickle.load(open(os.path.join(MSG_CHECK_DIR, "MSGchecker_model.pkl"), 'rb'))
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
