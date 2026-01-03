@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishZap | Cyber Library</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;800&family=Syne:wght@800&display=swap');
+
+        :root {
+            --bg-color: #3A86FF;
+            --primary: #FFE600;
+            --secondary: #FF006E;
+            --success: #00FFB2;
+            --dark: #000000;
+            --white: #FFFFFF;
+            --border-thick: 4px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        .grid-overlay {
+            position: fixed; inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: -1;
+        }
+
+        /* --- NAVIGATION --- */
+        .main-nav {
+            position: fixed; top: 0; left: 0; width: 100%; height: 75px;
+            background: var(--white); border-bottom: var(--border-thick) solid var(--dark);
+            z-index: 2000; display: flex; align-items: center;
+        }
+
+        .nav-container {
+            width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem; text-decoration: none; color: var(--dark); }
+        .nav-links a { text-decoration: none; color: black; font-weight: 800; margin-left: 20px; }
+
+        /* --- CONTENT --- */
+        .page-wrapper {
+            padding-top: 120px;
+            padding-bottom: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lib-header {
+            text-align: center;
+            background: var(--white);
+            border: var(--border-thick) solid var(--dark);
+            padding: 40px;
+            width: 90%;
+            max-width: 1200px;
+            box-shadow: 15px 15px 0 var(--dark);
+            margin-bottom: 50px;
+        }
+
+        .lib-header h1 { font-family: 'Syne', sans-serif; font-size: 3.5rem; text-transform: uppercase; }
+
+        /* --- GRID --- */
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .threat-card {
+            background: var(--white);
+            border: var(--border-thick) solid var(--dark);
+            padding: 30px;
+            position: relative;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .threat-card:hover {
+            transform: translate(-10px, -10px);
+            box-shadow: 15px 15px 0 var(--dark);
+        }
+
+        .danger-tag {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            padding: 5px 15px;
+            font-weight: 800;
+            border: 2px solid var(--dark);
+            font-size: 0.8rem;
+        }
+
+        .danger-low { background: var(--success); }
+        .danger-med { background: var(--primary); }
+        .danger-high { background: var(--secondary); color: white; }
+
+        .threat-card h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .threat-card p {
+            font-weight: 600;
+            line-height: 1.5;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .prevention-list {
+            background: #f0f0f0;
+            padding: 15px;
+            border-left: 5px solid var(--dark);
+            font-size: 0.9rem;
+        }
+
+        .prevention-list b { display: block; margin-bottom: 5px; text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .lib-header h1 { font-size: 2rem; }
+            .library-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">⚡ PHISHZAP</a>
+            <div class="nav-links">
+                <a href="/">HOME</a>
+                <a href="/report_crime">REPORT</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-wrapper">
+        <header class="lib-header">
+            <h1>Cyber Intelligence Library</h1>
+            <p style="font-weight: 800; margin-top: 10px;">INDIGENOUS KNOWLEDGE BASE FOR THREAT PREVENTION</p>
+        </header>
+
+        <section class="library-grid">
+            <article class="threat-card">
+                <span class="danger-tag danger-high">CRITICAL</span>
+                <h3>Phishing 101</h3>
+                <p>The most common form of social engineering. Attackers use spoofed emails and websites to steal credentials.</p>
+                <div class="prevention-list">
+                    <b>PREVENTION:</b>
+                    * Always check the domain name.<br>
+                    * Use PhishZap URL Checker.<br>
+                    * Enable Multi-Factor Auth (MFA).
+                </div>
+            </article>
+
+            <article class="threat-card">
+                <span class="danger-tag danger-med">MEDIUM</span>
+                <h3>Smishing (SMS)</h3>
+                <p>Fraudulent text messages designed to induce people to reveal personal info or click malicious mobile links.</p>
+                <div class="prevention-list">
+                    <b>PREVENTION:</b>
+                    * Never reply to "Bank" SMS.<br>
+                    * Use PhishZap Message Checker.<br>
+                    * Block unknown international senders.
+                </div>
+            </article>
+
+            <article class="threat-card">
+                <span class="danger-tag danger-high">CRITICAL</span>
+                <h3>Ransomware</h3>
+                <p>Malicious software that encrypts your files. The attacker demands a ransom to restore access.</p>
+                <div class="prevention-list">
+                    <b>PREVENTION:</b>
+                    * Daily offline backups.<br>
+                    * Never open .exe from emails.<br>
+                    * Keep OS & Browser updated.
+                </div>
+            </article>
+
+            <article class="threat-card">
+                <span class="danger-tag danger-low">LOW</span>
+                <h3>Social Scraping</h3>
+                <p>Automated collection of your personal data from social media to build better phishing profiles.</p>
+                <div class="prevention-list">
+                    <b>PREVENTION:</b>
+                    * Set profiles to Private.<br>
+                    * Audit third-party app access.<br>
+                    * Don't share location live.
+                </div>
+            </article>
+
+            <article class="threat-card">
+                <span class="danger-tag danger-med">MEDIUM</span>
+                <h3>Juice Jacking</h3>
+                <p>A type of cyberattack involving a charging port that doubles as a data connection, typically over USB.</p>
+                <div class="prevention-list">
+                    <b>PREVENTION:</b>
+                    * Use your own wall charger.<br>
+                    * Use a "USB Condom" blocker.<br>
+                    * Avoid public USB hubs.
+                </div>
+            </article>
+        </section>
+    </div>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishZap | Zap Bot AI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;800&family=Syne:wght@800&family=JetBrains+Mono:wght@500&display=swap');
+
+        :root {
+            --bg-color: #3A86FF;
+            --primary: #FFE600;
+            --secondary: #FF006E;
+            --dark: #000000;
+            --white: #FFFFFF;
+            --border-thick: 4px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- NAVIGATION --- */
+        .main-nav {
+            height: 75px;
+            background: var(--white);
+            border-bottom: var(--border-thick) solid var(--dark);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 100;
+        }
+
+        .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem; text-decoration: none; color: var(--dark); }
+
+        /* --- CHAT LAYOUT --- */
+        .terminal-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .terminal-window {
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            background: var(--white);
+            border: var(--border-thick) solid var(--dark);
+            box-shadow: 20px 20px 0 var(--dark);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .terminal-header {
+            background: var(--dark);
+            color: var(--primary);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .chat-display {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: #f4f4f4;
+        }
+
+        /* --- MESSAGES --- */
+        .msg {
+            max-width: 80%;
+            padding: 15px 20px;
+            border: 3px solid var(--dark);
+            font-weight: 700;
+            position: relative;
+        }
+
+        .bot-msg {
+            align-self: flex-start;
+            background: var(--primary);
+            box-shadow: 6px 6px 0 var(--dark);
+        }
+
+        .user-msg {
+            align-self: flex-end;
+            background: var(--secondary);
+            color: var(--white);
+            box-shadow: -6px 6px 0 var(--dark);
+        }
+
+        /* --- INPUT AREA --- */
+        .input-area {
+            border-top: var(--border-thick) solid var(--dark);
+            padding: 20px;
+            background: var(--white);
+            display: flex;
+            gap: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border: 3px solid var(--dark);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            outline: none;
+        }
+
+        .send-btn {
+            background: var(--dark);
+            color: var(--white);
+            padding: 0 30px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .send-btn:hover {
+            background: var(--secondary);
+            transform: translate(-4px, -4px);
+            box-shadow: 4px 4px 0 var(--dark);
+        }
+
+        /* Scrollbar */
+        .chat-display::-webkit-scrollbar { width: 10px; }
+        .chat-display::-webkit-scrollbar-thumb { background: var(--dark); }
+
+    </style>
+</head>
+<body>
+
+    <nav class="main-nav">
+        <a href="/" class="nav-logo">⚡ PHISHZAP</a>
+    </nav>
+
+    <div class="terminal-wrapper">
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <span>SYSTEM_STATUS: ACTIVE</span>
+                <span>ZAP_BOT_CORE_V1.0</span>
+            </div>
+            
+            <div class="chat-display" id="chatDisplay">
+                <div class="msg bot-msg">
+                    [SYSTEM READY] <br> 
+                    I am Zap Bot, your indigenous AI security assistant. <br>
+                    How can I help you secure your digital perimeter today?
+                </div>
+            </div>
+
+            <form class="input-area" id="zapForm">
+                <input type="text" id="userInput" placeholder="Ask about threats, security tips, or report a bug..." autocomplete="off" required>
+                <button type="submit" class="send-btn">EXECUTE</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const chatDisplay = document.getElementById('chatDisplay');
+        const zapForm = document.getElementById('zapForm');
+        const userInput = document.getElementById('userInput');
+
+        function addMessage(content, type) {
+            const div = document.createElement('div');
+            div.className = `msg ${type}-msg`;
+            div.innerHTML = content;
+            chatDisplay.appendChild(div);
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+        }
+
+        zapForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = userInput.value;
+            addMessage(message, 'user');
+            userInput.value = '';
+
+            // Simulate typing state
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'msg bot-msg';
+            loadingMsg.innerText = "ANALYZING...";
+            chatDisplay.appendChild(loadingMsg);
+
+            try {
+                const response = await fetch('/zap_bot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ 'message': message })
+                });
+                
+                const data = await response.json();
+                chatDisplay.removeChild(loadingMsg);
+                addMessage(data.reply, 'bot');
+            } catch (error) {
+                chatDisplay.removeChild(loadingMsg);
+                addMessage("CONNECTION_ERROR: AI Core unreachable.", 'bot');
+            }
+        });
+    </script>
+</body>
+</html>

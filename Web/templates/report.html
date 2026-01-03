@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishZap | Report Cyber Incident</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;800&family=Syne:wght@800&display=swap');
+
+        :root {
+            --bg-color: #FB5607;
+            --primary: #FFE600;
+            --secondary: #FF006E;
+            --dark: #000000;
+            --white: #FFFFFF;
+            --border-thick: 4px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grid-overlay {
+            position: fixed; inset: 0;
+            background-image: linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: -1;
+        }
+
+        /* --- NAVIGATION --- */
+        .main-nav {
+            position: fixed; top: 0; left: 0; width: 100%; height: 75px;
+            background: var(--white); border-bottom: var(--border-thick) solid var(--dark);
+            z-index: 2000; display: flex; align-items: center;
+        }
+
+        .nav-container {
+            width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem; text-decoration: none; color: var(--dark); }
+        
+        .nav-links a {
+            text-decoration: none; color: black; font-weight: 800; margin-left: 20px;
+            padding: 8px 15px; border: 2px solid transparent; transition: 0.2s;
+        }
+        .nav-links a:hover { background: var(--primary); border: 2px solid var(--dark); box-shadow: 4px 4px 0 var(--dark); }
+
+        /* --- CONTENT --- */
+        .page-wrapper {
+            padding-top: 120px;
+            padding-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .report-container {
+            background: var(--white);
+            width: 90%;
+            max-width: 900px;
+            border: var(--border-thick) solid var(--dark);
+            box-shadow: 20px 20px 0 var(--dark);
+            padding: 40px;
+        }
+
+        .alert-banner {
+            background: var(--dark);
+            color: var(--primary);
+            padding: 10px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h1 { font-family: 'Syne', sans-serif; font-size: 3rem; margin-bottom: 10px; line-height: 1; }
+        p.subtitle { font-weight: 700; margin-bottom: 40px; color: #444; }
+
+        /* --- FORM --- */
+        .report-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .full-width { grid-column: span 2; }
+
+        label { font-weight: 800; font-size: 0.9rem; text-transform: uppercase; }
+
+        input, select, textarea {
+            padding: 15px;
+            border: 3px solid var(--dark);
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        textarea { resize: none; height: 120px; }
+        input:focus { background: #f0f0f0; border-color: var(--secondary); }
+
+        .btn-submit {
+            grid-column: span 2;
+            background: var(--dark);
+            color: var(--white);
+            padding: 20px;
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            background: var(--white);
+            color: var(--dark);
+            border: 4px solid var(--dark);
+            transform: translate(-8px, -8px);
+            box-shadow: 10px 10px 0 var(--dark);
+        }
+
+        /* --- SUCCESS OVERLAY --- */
+        .success-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            backdrop-filter: blur(8px);
+        }
+
+        .success-card {
+            background: var(--primary);
+            border: var(--border-thick) solid var(--dark);
+            box-shadow: 15px 15px 0 var(--dark);
+            padding: 50px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .success-icon { font-size: 5rem; margin-bottom: 20px; }
+        
+        .success-card h2 { 
+            font-family: 'Syne', sans-serif; 
+            font-size: 2.2rem; 
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .btn-close {
+            margin-top: 25px;
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+        }
+
+        .btn-close:hover { background: var(--secondary); transform: scale(1.02); }
+
+        .hidden { display: none !important; }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .report-form { grid-template-columns: 1fr; }
+            .full-width, .btn-submit { grid-column: span 1; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">⚡ PHISHZAP</a>
+            <div class="nav-links">
+                <a href="/">HOME</a>
+                <a href="/about">ABOUT</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-wrapper">
+        <div id="successOverlay" class="success-overlay hidden">
+            <div class="success-card">
+                <div class="success-icon">🚔</div>
+                <h2>REPORT LOGGED</h2>
+                <p style="font-weight: 700;">Incident has been successfully uploaded to the PhishZap Indigenous Threat Database. Evidence preserved.</p>
+                <button onclick="closeSuccess()" class="btn-close">BACK TO HOME</button>
+            </div>
+        </div>
+
+        <main class="report-container">
+            <div class="alert-banner">Incident Report Portal: Legal Documentation</div>
+            
+            <h1>Report a Crime</h1>
+            <p class="subtitle">Securely document digital threats. Your data contributes to our live threat intelligence engine.</p>
+
+            <form id="reportForm" class="report-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Incident Type</label>
+                    <select name="type">
+                        <option value="phishing">Phishing Link</option>
+                        <option value="smishing">SMS Scam</option>
+                        <option value="financial">Financial Fraud</option>
+                        <option value="identity">Identity Theft</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Suspicious URL / Sender Info</label>
+                    <input type="text" name="target" placeholder="e.g. http://bad-link.com or +91-XXXXX-XXXXX" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Incident Details</label>
+                    <textarea name="details" placeholder="Please describe the sequence of events..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">SUBMIT OFFICIAL REPORT</button>
+            </form>
+
+            <div style="margin-top: 30px; text-align: center; font-weight: 800;">
+                Filing an official FIR? Use <a href="https://www.cybercrime.gov.in" target="_blank" style="color:var(--secondary);">CyberCrime.gov.in</a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('reportForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('.btn-submit');
+            const originalText = submitBtn.innerText;
+            
+            submitBtn.innerText = "ENCRYPTING & UPLOADING...";
+            submitBtn.disabled = true;
+
+            const formData = new FormData(this);
+
+            try {
+                // Adjust this URL to your specific Flask route
+                const response = await fetch('/report_crime', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    document.getElementById('successOverlay').classList.remove('hidden');
+                    this.reset();
+                } else {
+                    alert("Submission error. Please check your connection.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Critical: Could not connect to PhishZap server.");
+            } finally {
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        function closeSuccess() {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>

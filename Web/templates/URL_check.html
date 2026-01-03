@@ -272,70 +272,83 @@
     </div>
 
     <script>
-        const urlForm = document.getElementById('urlForm');
-        const urlInput = document.getElementById('urlInput');
-        const checkBtn = document.getElementById('checkBtn');
-        const resultContainer = document.getElementById('resultContainer');
-        const resultMessage = document.getElementById('resultMessage');
-        const scoreDisplay = document.getElementById('scoreValue');
-        const streakDisplay = document.getElementById('streakValue');
-        const progressBar = document.getElementById('progressBar');
+      const urlForm = document.getElementById('urlForm');
+const urlInput = document.getElementById('urlInput');
+const checkBtn = document.getElementById('checkBtn');
+const resultContainer = document.getElementById('resultContainer');
+const resultMessage = document.getElementById('resultMessage');
+const scoreDisplay = document.getElementById('scoreValue');
+const streakDisplay = document.getElementById('streakValue');
+const progressBar = document.getElementById('progressBar');
 
-        let score = 0;
-        let streak = 0;
-        let checks = 0;
+let score = 0;
+let streak = 0;
+let checks = 0;
 
-        function loadExample(el) {
-            urlInput.value = el.innerText;
-            urlForm.dispatchEvent(new Event('submit'));
-        }
+// Function to load examples from the 'Target Practice' list
+function loadExample(el) {
+    urlInput.value = el.innerText;
+    // Programmatically trigger the submit
+    urlForm.dispatchEvent(new Event('submit'));
+}
 
-        function showXP(pts) {
-            const xp = document.createElement('div');
-            xp.style.cssText = `position:fixed; top:50%; left:50%; background:var(--primary); padding:15px 30px; border:3px solid #000; font-weight:900; z-index:5000; animation: xpPop 1s forwards;`;
-            xp.textContent = `+${pts} XP`;
-            document.body.appendChild(xp);
-            setTimeout(() => xp.remove(), 1000);
-        }
+// Visual XP pop-up for gamification
+function showXP(pts) {
+    const xp = document.createElement('div');
+    xp.style.cssText = `position:fixed; top:50%; left:50%; background:var(--primary); padding:15px 30px; border:3px solid #000; font-weight:900; z-index:5000; transform:translate(-50%, -50%); pointer-events:none; animation: xpPop 1s forwards;`;
+    xp.textContent = `+${pts} XP`;
+    document.body.appendChild(xp);
+    setTimeout(() => xp.remove(), 1000);
+}
 
-        urlForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            checkBtn.disabled = true;
-            checkBtn.innerText = "SCANNING...";
-            resultContainer.classList.add('hidden');
+urlForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // UI Feedback: Loading state
+    checkBtn.disabled = true;
+    checkBtn.innerText = "SCANNING...";
+    resultContainer.classList.add('hidden');
 
-            try {
-                // Simulated API call - replace with your actual /URL_check endpoint
-                const response = await fetch('/URL_check', { 
-                    method: 'POST', 
-                    body: new URLSearchParams({url: urlInput.value}) 
-                });
-                const text = await response.text();
-                const isBad = text.toLowerCase().includes("bad");
-
-                resultContainer.className = `result-card ${isBad ? 'malicious' : 'safe'}`;
-                resultMessage.innerHTML = isBad ? `⚠️ THREAT: ${text}` : `✅ SECURE: ${text}`;
-                resultContainer.classList.remove('hidden');
-
-                // Update Stats
-                const pts = isBad ? 50 : 10;
-                score += pts;
-                streak++;
-                checks++;
-                
-                scoreDisplay.textContent = score;
-                streakDisplay.textContent = streak;
-                progressBar.style.width = `${Math.min(checks * 10, 100)}%`;
-                showXP(pts);
-
-            } catch (err) {
-                resultMessage.innerText = "Connection Error";
-                resultContainer.classList.remove('hidden');
-            } finally {
-                checkBtn.disabled = false;
-                checkBtn.innerText = "SCAN LINK";
-            }
+    try {
+        // 1. Fetch from Flask
+        const response = await fetch('/URL_check', { 
+            method: 'POST', 
+            body: new URLSearchParams({url: urlInput.value}) 
         });
+
+        // 2. IMPORTANT: Parse as JSON, not Text
+        const data = await response.json();
+
+        // 3. Logic check: Use the 'status' key from our Python jsonify
+        const isBad = (data.status === 'scam');
+
+        // 4. Update UI Styling
+        resultContainer.className = `result-card ${isBad ? 'malicious' : 'safe'}`;
+        
+        // Only show the message string, not the whole JSON object
+        resultMessage.innerHTML = isBad ? `⚠️ THREAT: ${data.message}` : `✅ SECURE: ${data.message}`;
+        resultContainer.classList.remove('hidden');
+
+        // 5. Update Gamification Stats
+        const pts = isBad ? 50 : 10;
+        score += pts;
+        streak++;
+        checks++;
+        
+        scoreDisplay.textContent = score;
+        streakDisplay.textContent = streak;
+        progressBar.style.width = `${Math.min(checks * 10, 100)}%`;
+        showXP(pts);
+
+    } catch (err) {
+        console.error(err);
+        resultMessage.innerText = "Connection Error: Is Flask running?";
+        resultContainer.classList.remove('hidden');
+    } finally {
+        checkBtn.disabled = false;
+        checkBtn.innerText = "SCAN LINK";
+    }
+});
     </script>
 </body>
 </html>
