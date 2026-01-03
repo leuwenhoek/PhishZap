@@ -5,8 +5,12 @@ import re
 
 app = Flask(__name__)
 
-vector = pickle.load(open(os.path.join('Model',"vectorize.pkl"),'rb'))
-model = pickle.load(open(os.path.join('Model',"model.pkl"),'rb'))
+vector = pickle.load(open(os.path.join('Model',"URL checker","vectorize.pkl"),'rb'))
+model = pickle.load(open(os.path.join('Model',"URL checker","model.pkl"),'rb'))
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    return render_template("home.html")
 
 @app.route('/URL_check', methods=['GET', 'POST'])
 def URL_check():
