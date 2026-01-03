@@ -6,8 +6,9 @@ from google.genai import types
 from dotenv import load_dotenv
 import re
 
-app = Flask(__name__)
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+app = Flask(__name__, template_folder=os.path.join(PROJECT_ROOT,"PhishZap","Web","templates"), static_folder=os.path.join(PROJECT_ROOT,"PhishZap","Web","static"))
 
 URLchecker_vector = pickle.load(open(os.path.join(PROJECT_ROOT,"PhishZap", "Model", "URL checker", "vectorize.pkl"), 'rb'))
 URLchecker_model = pickle.load(open(os.path.join(PROJECT_ROOT,"PhishZap",'Model',"URL checker","model.pkl"),'rb'))
